@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 app.use(
 	cors({
-		origin: ['http://scraping.minhnguyen.website', '*'],
+		origin: ['http://scraping.minhnguyen.website', 'http://localhost:3000', '*'],
 		methods: ['GET'],
 	})
 );
@@ -30,7 +30,7 @@ app.use(
 runSocket();
 
 // Port
-app.listen(4000, () => {
+app.listen(8888, () => {
 	console.log(`Listening on port: 8888`);
 });
 

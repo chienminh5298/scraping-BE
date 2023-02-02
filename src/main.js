@@ -1,22 +1,24 @@
 import puppeteer, { Page } from 'puppeteer';
 import Element from 'puppeteer';
-import XLSX from 'xlsx';
 import axios from 'axios';
 import excelJS from 'exceljs';
+import Jimp from 'jimp';
 import fs from 'fs';
+
 import { autoScroll, generate_random_MD5 } from './helper/index.js';
 
-// download item image
-const getImage = async (imageUrl) => {
-	const response = await axios({
-		method: 'get',
-		url: imageUrl,
-		responseType: 'arraybuffer',
-	});
-	const buffer = new Buffer.from(response.data, 'binary');
+async function resizeImage(imageBuffer) {
+	// Read the image buffer using jimp
+	const image = await Jimp.read(imageBuffer);
 
-	return buffer;
-};
+	// Resize the image
+	image.resize(Jimp.AUTO, 50);
+
+	// Get the resized image buffer
+	const resizedImageBuffer = await image.getBufferAsync(Jimp.MIME_PNG);
+
+	return resizedImageBuffer;
+}
 
 async function scrapShopee(page, items) {
 	let itemsHandles = await page.$$('div.container div.row a[data-sqe="link"]');
@@ -76,7 +78,7 @@ export const shopee = async (data) => {
 	let pageNum = 0;
 	let items = [];
 
-	const browser = await puppeteer.launch({ headless: false });
+	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
 	await page.setViewport({
 		deviceScaleFactor: 1,
@@ -99,7 +101,7 @@ export const shopee = async (data) => {
 
 			await scrapShopee(page, items);
 			pageNum++;
-			// if (pageNum === 4) break;
+			if (pageNum === 2) break;
 
 			//send update socket
 			io.to(data.room).emit('update-file', { ...data, items: items.length });
@@ -163,8 +165,10 @@ export const shopee = async (data) => {
 		try {
 			const response = await axios.get(items[i].img, { responseType: 'arraybuffer' });
 			const image = Buffer.from(response.data, 'binary');
+			const resizedImageBuffer = await resizeImage(image);
+
 			const imageId2 = workbook.addImage({
-				buffer: image,
+				buffer: resizedImageBuffer,
 				extension: 'jpeg',
 			});
 			worksheet.addImage(imageId2, {
@@ -175,6 +179,8 @@ export const shopee = async (data) => {
 	}
 
 	await workbook.xlsx.writeFile(`${filename}.xlsx`);
+	const xlsxBuffer = fs.readFileSync(`${filename}.xlsx`);
+
 	await browser.close();
 	//send update socket last time here
 	io.to(data.room).emit('update-file', { ...data, items: items.length, file: filename, status: 'prepair' });
