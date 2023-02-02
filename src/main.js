@@ -101,7 +101,7 @@ export const shopee = async (data) => {
 
 			await scrapShopee(page, items);
 			pageNum++;
-			if (pageNum === 2) break;
+			// if (pageNum === 2) break;
 
 			//send update socket
 			io.to(data.room).emit('update-file', { ...data, items: items.length });
