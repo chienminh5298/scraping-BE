@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 export const runSocket = () => {
 	global.io = new Server(9999, {
 		cors: {
-			origin: ['http://localhost:3000'],
+			origin: ['http://scraping.minhnguyen.website'],
 		},
 	});
 	io.on('connection', (socket) => {});

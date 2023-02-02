@@ -18,11 +18,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
 	cors({
-		origin: ['http://localhost:3000', '*'],
+		origin: ['http://scraping.minhnguyen.website', '*'],
 		methods: ['GET'],
 	})
 );
@@ -32,7 +31,7 @@ runSocket();
 
 // Port
 app.listen(4000, () => {
-	console.log(`Listening on port: 4000`);
+	console.log(`Listening on port: 8888`);
 });
 
 // Router
