@@ -3,7 +3,7 @@ import * as main from '../src/main.js';
 /* GET home page. */
 export const router = (app) => {
 	app.get('/', function (req, res, next) {
-		res.render('index', { title: 'Hey', message: 'Hello there!' });
+		res.status(200).end();
 	});
 	app.post('/download', async function (req, res, next) {
 		const search = req.body;

@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 app.use(
 	cors({
-		origin: ['http://scraping.minhnguyen.website', 'http://localhost:3000', '*'],
+		origin: '*',
 		methods: ['GET'],
 	})
 );

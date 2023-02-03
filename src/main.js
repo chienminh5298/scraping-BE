@@ -78,7 +78,7 @@ export const shopee = async (data) => {
 	let pageNum = 0;
 	let items = [];
 
-	const browser = await puppeteer.launch({ headless: true });
+	const browser = await puppeteer.launch({ headless: true, executablePath: '/usr/bin/chromium-browser', args: ['--no-sandbox'] });
 	const page = await browser.newPage();
 	await page.setViewport({
 		deviceScaleFactor: 1,
